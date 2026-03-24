@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  
+  --color-surface: #181b1e;
+  --color-on-surface: #d1d5db;
+  --color-primary-nebula: #ffffff;
+  --color-on-primary-nebula: #0f172a;
+  --color-secondary-nebula: #94a3b8;
+  --color-surface-container-low: #1e293b;
+  --color-surface-container-lowest: #0f172a;
+  --color-surface-container: #1e293b;
+  --color-surface-container-high: #334155;
+  --color-surface-container-highest: #475569;
+}
+
+:root {
+  --foreground-rgb: 209, 213, 223;
+  --background-start-rgb: 24, 27, 30;
+  --background-end-rgb: 15, 23, 42;
+  --font-headline: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+@layer base {
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: #131313;
+    font-family: var(--font-body);
+  }
+}
+
+@keyframes drift {
+  0% { transform: translateX(0); filter: blur(0); }
+  50% { transform: translateX(2px); filter: blur(0.5px); }
+  100% { transform: translateX(0); filter: blur(0); }
+}
+
+.animate-drift:hover {
+  animation: drift 0.2s ease-in-out infinite;
+}
+
+.glass-panel {
+  background: rgba(53, 53, 53, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.scanline-overlay::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.03) 0px, rgba(0, 0, 0, 0.03) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+  z-index: 100;
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.haptic-btn:active {
+  transform: scale(0.96);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #131313;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Page layout with sidebar */
+.page-content {
+  padding-top: 5rem;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .page-content {
+    padding-left: 16rem;
+  }
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Touch-friendly buttons on mobile */
+@media (max-width: 768px) {
+  .haptic-btn:active {
+    transform: scale(0.95);
+  }
+  
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Ensure images don't overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better touch targets */
+@media (max-width: 640px) {
+  input, button, select, textarea {
+    font-size: 16px !important;
+  }
+}

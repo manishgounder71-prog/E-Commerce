@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import { Navbar } from '@/components/Navbar';
 import { useStore, MOCK_PRODUCTS, MOCK_REVIEWS } from '@/lib/store';
 import { 
@@ -11,7 +12,6 @@ import {
     Zap, 
     Plus, 
     Minus, 
-    ArrowLeft, 
     CheckCircle2, 
     Heart,
     Star,
@@ -88,11 +88,15 @@ export default function ProductDetail() {
                     <div className="lg:col-span-5">
                         <div className="sticky top-24">
                             <div className="relative rounded-2xl overflow-hidden bg-surface-container border border-white/5">
-                                <img 
-                                    src={product.image} 
-                                    alt={product.title} 
-                                    className="w-full aspect-square object-cover" 
-                                />
+                                <div className="relative w-full aspect-square">
+                                    <Image 
+                                        src={product.image} 
+                                        alt={product.title} 
+                                        fill
+                                        className="object-cover" 
+                                        priority
+                                    />
+                                </div>
                                 
                                 {/* Badges */}
                                 <div className="absolute top-4 left-4 flex flex-col gap-2">
@@ -118,7 +122,9 @@ export default function ProductDetail() {
                             <div className="flex gap-3 mt-4">
                                 {[1, 2, 3, 4].map((i) => (
                                     <button key={i} className="w-16 h-16 rounded-lg bg-surface-container border border-white/10 overflow-hidden hover:border-white/30 transition-colors">
-                                        <img src={product.image} alt="" className="w-full h-full object-cover" />
+                                        <div className="relative w-full h-full">
+                                            <Image src={product.image} alt="" fill className="object-cover" />
+                                        </div>
                                     </button>
                                 ))}
                             </div>

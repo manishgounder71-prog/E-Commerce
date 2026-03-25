@@ -4,6 +4,7 @@ import React from 'react';
 import { Navbar } from '@/components/Navbar';
 import { ArrowRight, Box, Zap, Cpu, Globe } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
     return (
@@ -40,7 +41,7 @@ export default function Home() {
                     {/* Hero Image */}
                     <div className="absolute right-[-20%] sm:right-[-15%] lg:right-[-10%] top-1/2 -translate-y-1/2 w-[80%] h-full pointer-events-none opacity-40 mix-blend-screen blur-[2px] hover:blur-none transition-all duration-700 hidden sm:block">
                         <img 
-                            src="https://placehold.co/1200x800/1f1f1f/666666?text=NEBULA+ARCHITECTURE"
+                            src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80"
                             alt="Hero"
                             className="w-full h-full object-contain"
                         />
@@ -58,17 +59,22 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 auto-rows-[250px] sm:auto-rows-[300px]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-[250px] sm:auto-rows-[300px]">
                         <CategoryCard 
                             title="Hardware Evolution"
                             desc="Tier-1 processing units and kinetic enclosures."
-                            image="https://placehold.co/800x600/1a1a1a/ffffff?text=HARDWARE"
+                            image="https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80"
                             colSpan="sm:col-span-2"
                         />
                         <CategoryCard 
                             title="Soft-Asset Apparel"
                             desc="Structural textiles with neural fiber integration."
-                            image="https://placehold.co/600x600/2d2d2d/ffffff?text=APPAREL"
+                            image="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80"
+                        />
+                        <CategoryCard 
+                            title="Kinetic Module"
+                            desc="Advanced mechanical systems and motion control units."
+                            image="https://images.unsplash.com/photo-1569517282132-25e4e1e4ab78?w=600&q=80"
                         />
                         <div className="glass-panel p-6 sm:p-8 lg:p-10 flex flex-col justify-center gap-4 sm:gap-6 rounded-xl border-white/10 hover:border-white/20 transition-all">
                             <Zap className="text-white w-6 h-6 sm:w-8" />
@@ -85,13 +91,8 @@ export default function Home() {
                         <CategoryCard 
                             title="Visual Interfaces"
                             desc="Retinal-mapped projection systems."
-                            image="https://placehold.co/800x600/1a1a1a/ffffff?text=INTERFACES"
+                            image="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80"
                             colSpan="sm:col-span-2"
-                        />
-                        <CategoryCard 
-                            title="Kinetic Module"
-                            desc="Advanced mechanical systems and motion control units."
-                            image="https://placehold.co/600x600/2d2d2d/ffffff?text=KINETIC"
                         />
                     </div>
                 </section>
@@ -140,11 +141,15 @@ export default function Home() {
 function CategoryCard({ title, desc, image, colSpan = "" }: { title: string, desc: string, image: string, colSpan?: string }) {
     return (
         <div className={`group relative overflow-hidden rounded-xl border border-white/5 hover:border-white/20 transition-all ${colSpan}`}>
-            <img 
-                src={image} 
-                alt={title} 
-                className="w-full h-full object-cover" 
-            />
+            <div className="relative w-full h-full min-h-[inherit]">
+                <Image 
+                    src={image} 
+                    alt={title} 
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 lg:bottom-8 lg:left-8 lg:right-8">
                 <h3 className="font-headline text-base sm:text-lg lg:text-2xl font-bold text-white uppercase tracking-tight mb-1 sm:mb-2">{title}</h3>

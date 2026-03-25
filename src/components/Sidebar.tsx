@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
     LayoutGrid, 
     History, 
@@ -53,10 +54,11 @@ export const Sidebar = () => {
                 {/* User */}
                 <div className="p-4 border-b border-white/5">
                     <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-                        <div className="w-12 h-12 rounded-full bg-white/10 overflow-hidden">
-                            <img 
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                            <Image 
                                 alt="User" 
-                                className="w-full h-full object-cover" 
+                                fill
+                                className="object-cover" 
                                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200" 
                             />
                         </div>
@@ -151,10 +153,11 @@ export const Sidebar = () => {
             <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 z-40 bg-neutral-900/60 backdrop-blur-xl border-r border-white/5 flex-col pt-20 pb-6 px-4 gap-4">
                 {/* User */}
                 <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-                    <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden">
-                        <img 
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                        <Image 
                             alt="User" 
-                            className="w-full h-full object-cover" 
+                            fill
+                            className="object-cover" 
                             src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200" 
                         />
                     </div>

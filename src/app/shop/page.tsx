@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
-import { useStore, MOCK_PRODUCTS } from '@/lib/store';
+import { useStore, MOCK_PRODUCTS, Product } from '@/lib/store';
 import { 
     ShoppingCart, 
     Package, 
@@ -15,7 +15,7 @@ import {
     LayoutGrid
 } from 'lucide-react';
 import Link from 'next/link';
-import { Product } from '@/lib/store';
+import Image from 'next/image';
 
 export default function Shop() {
     const { searchQuery, setSearchQuery, activeCategory, setActiveCategory, priceRange, setPriceRange, minRating, setMinRating, inStockOnly, setInStockOnly } = useStore();
@@ -80,7 +80,6 @@ export default function Shop() {
     }, []);
 
     const categories = ['ALL', 'HARDWARE', 'APPAREL', 'OPTICS'];
-    const brands = [...new Set(MOCK_PRODUCTS.map(p => p.brand).filter(Boolean))];
 
     const gridCols = {
         small: 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6',
@@ -128,7 +127,9 @@ export default function Shop() {
                                         }}
                                         className="flex items-center gap-4 p-4 hover:bg-white/5 transition-colors"
                                     >
-                                        <img src={product.image} alt={product.title} className="w-12 h-12 rounded-lg object-cover" />
+                                        <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                                            <Image src={product.image} alt={product.title} fill className="object-cover" />
+                                        </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="font-headline text-sm text-white uppercase truncate">{product.title}</p>
                                             <p className="text-[10px] text-neutral-500 uppercase">{product.category} • {product.brand}</p>
@@ -293,7 +294,7 @@ export default function Shop() {
                 </div>
 
                 {/* Product Grid */}
-                <div className={`grid ${gridCols[gridSize]} gap-4 sm:gap-6`}>
+                <div className={`grid gap-4 sm:gap-6 ${gridCols[gridSize as keyof typeof gridCols]}`}>
                     {filteredProducts.map((product) => (
                         <ProductCard key={product.id} {...product} />
                     ))}
@@ -325,7 +326,6 @@ export default function Shop() {
 function ProductCard({ id, title, price, originalPrice, image, category, rating, reviewCount, inStock, stockCount, brand }: Product) {
     const { addToCart, wishlist, addToWishlist, removeFromWishlist } = useStore();
     const [added, setAdded] = useState(false);
-    const [showQuickView, setShowQuickView] = useState(false);
     
     const isInWishlist = wishlist.includes(id);
     const discount = originalPrice ? Math.round((1 - price / originalPrice) * 100) : 0;
@@ -353,10 +353,12 @@ function ProductCard({ id, title, price, originalPrice, image, category, rating,
             <Link href={`/product/${id}`} className="block rounded-xl bg-surface-container-low border border-white/5 hover:border-white/20 transition-all overflow-hidden">
                 {/* Image */}
                 <div className="relative aspect-square overflow-hidden bg-surface-container">
-                    <img 
+                    <Image 
                         src={image} 
                         alt={title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500" 
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     />
                     
                     {/* Badges */}

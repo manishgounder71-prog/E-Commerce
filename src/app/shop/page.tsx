@@ -87,8 +87,31 @@ export default function Shop() {
         large: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
     };
 
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: 'https://nebula-ecommerce.vercel.app/',
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Shop',
+                item: 'https://nebula-ecommerce.vercel.app/shop',
+            },
+        ],
+    };
+
     return (
         <main className="min-h-screen bg-surface text-white">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <Navbar />
 
             <div className="pt-20 sm:pt-24 pb-12 px-4 sm:px-6 max-w-7xl mx-auto">

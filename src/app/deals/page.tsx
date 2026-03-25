@@ -38,29 +38,52 @@ export default function DealsPage() {
         return MOCK_PRODUCTS.filter(p => productIds.includes(p.id));
     };
 
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: 'https://nebula-ecommerce.vercel.app/',
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Deals',
+                item: 'https://nebula-ecommerce.vercel.app/deals',
+            },
+        ],
+    };
+
     return (
         <main className="min-h-screen bg-surface text-white">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <Navbar />
 
             <div className="pt-20 px-4 sm:px-6 max-w-7xl mx-auto pb-12">
                 {/* Hero Banner */}
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-900/50 to-pink-900/50 border border-purple-500/20 p-8 sm:p-12 mb-10">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(168,85,247,0.15)_0%,transparent_50%)]" />
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-900/50 to-orange-900/50 border border-red-500/20 p-8 sm:p-12 mb-10">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(249,115,22,0.15)_0%,transparent_50%)]" />
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-4">
                             <Flame className="text-orange-500" size={32} />
-                            <span className="font-headline text-xs sm:text-sm uppercase tracking-widest text-orange-400 font-bold">Limited Time</span>
+                            <span className="font-headline text-xs sm:text-sm uppercase tracking-widest text-orange-400 font-bold">Limited Time Offers</span>
                         </div>
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-headline font-black text-white uppercase tracking-tight mb-4">
-                            MEGA ARCHIVE SALE
+                            BIG SAVINGS DAY
                         </h1>
                         <p className="text-neutral-400 text-sm sm:text-base max-w-xl mb-6">
-                            Up to 40% off on premium architectural assets. Flash deals, bundle offers, and exclusive access for members.
+                            Save up to 50% off on top brands. Flash deals, daily offers, and exclusive discounts for Prime members.
                         </p>
                         <div className="flex items-center gap-6">
                             <div className="flex items-center gap-2 text-orange-400">
                                 <Clock size={18} />
-                                <span className="font-headline text-sm font-bold uppercase tracking-wider">Ends in 5 hours</span>
+                                <span className="font-headline text-sm font-bold uppercase tracking-wider">Deal ends in 5 hours</span>
                             </div>
                         </div>
                     </div>

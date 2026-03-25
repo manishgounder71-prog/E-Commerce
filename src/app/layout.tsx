@@ -70,7 +70,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'NEBULA',
+              url: 'https://nebula-ecommerce.vercel.app',
+              logo: 'https://nebula-ecommerce.vercel.app/logo.png',
+              sameAs: [
+                'https://twitter.com/nebula',
+                'https://github.com/nebula',
+              ],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                telephone: '+91-XXXXXXXXXX',
+                contactType: 'customer service',
+              },
+            }),
+          }}
+        />
+      </head>
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} font-body antialiased bg-surface text-on-surface selection:bg-white selection:text-black scanline-overlay`}
       >

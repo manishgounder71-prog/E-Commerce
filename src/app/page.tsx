@@ -79,22 +79,30 @@ export default function Home() {
                             desc="Everything you need for your home."
                             image="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80"
                         />
-                        <div className="glass-panel p-6 sm:p-8 lg:p-10 flex flex-col justify-center gap-4 sm:gap-6 rounded-xl border-white/10 hover:border-white/20 transition-all">
-                            <Zap className="text-white w-6 h-6 sm:w-8" />
-                            <h3 className="font-headline text-xl sm:text-2xl font-bold text-white uppercase tracking-tight leading-tight">
-                                FLASH DEALS
-                            </h3>
-                            <p className="text-neutral-500 text-xs sm:text-sm leading-relaxed">
-                                Up to 70% off on selected items. Limited time offers!
-                            </p>
-                            <Link href="/deals" className="text-white text-[9px] sm:text-[10px] font-bold tracking-[0.2em] uppercase flex items-center gap-2 group mt-2 sm:mt-4">
-                                SHOP DEALS <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                            </Link>
+                        <div className="group glass-panel relative overflow-hidden p-6 sm:p-8 lg:p-10 flex flex-col justify-center gap-4 sm:gap-6 rounded-xl border-white/10 hover:border-white/20 transition-all">
+                            <Image 
+                                src="/images/flash-deals.png"
+                                alt="Flash Deals"
+                                fill
+                                className="object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+                            />
+                            <div className="relative z-10">
+                                <Zap className="text-white w-6 h-6 sm:w-8" />
+                                <h3 className="font-headline text-xl sm:text-2xl font-bold text-white uppercase tracking-tight leading-tight">
+                                    FLASH DEALS
+                                </h3>
+                                <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed">
+                                    Up to 70% off on selected items. Limited time offers!
+                                </p>
+                                <Link href="/deals" className="text-white text-[9px] sm:text-[10px] font-bold tracking-[0.2em] uppercase flex items-center gap-2 group mt-2 sm:mt-4">
+                                    SHOP DEALS <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                            </div>
                         </div>
                         <CategoryCard 
                             title="Sports & Outdoors"
                             desc="Fitness gear, outdoor equipment and more."
-                            image="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8?w=800&q=80"
+                            image="/images/sports-outdoors.png"
                             colSpan="sm:col-span-2"
                         />
                     </div>

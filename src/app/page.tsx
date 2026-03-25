@@ -39,11 +39,11 @@ export default function Home() {
                     </div>
 
                     {/* Hero Image */}
-                    <div className="absolute right-[-20%] sm:right-[-15%] lg:right-[-10%] top-1/2 -translate-y-1/2 w-[80%] h-full pointer-events-none opacity-40 mix-blend-screen blur-[2px] hover:blur-none transition-all duration-700 hidden sm:block">
+                    <div className="absolute right-[-15%] sm:right-[-10%] lg:right-[-5%] top-1/2 -translate-y-1/2 w-[85%] h-full pointer-events-none opacity-60 mix-blend-screen transition-all duration-700 hidden sm:block">
                         <img 
-                            src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80"
-                            alt="Hero"
-                            className="w-full h-full object-contain"
+                            src="/images/hero-smart.png"
+                            alt="Shop Smart"
+                            className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
                         />
                     </div>
                 </section>

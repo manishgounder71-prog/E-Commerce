@@ -16,11 +16,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://nebula-ecommerce.vercel.app'),
   title: {
-    default: "NEBULA | B2B ARCHITECTURAL VOID",
+    default: "NEBULA | NEXT-GEN B2B E-COMMERCE",
     template: "%s | NEBULA"
   },
-  description: "Next-generation B2B marketplace for architectural assets, hardware evolution, and neural fiber apparel. Production-ready assets for the architectural void.",
-  keywords: ["B2B", "Architectural Assets", "Hardware", "Apparel", "Marketplace", "Design Systems"],
+  description: "High-performance B2B marketplace for architectural assets, hardware evolution, and neural fiber apparel. Production-ready assets for the architectural void.",
+  keywords: ["B2B", "Architectural Assets", "Hardware", "Apparel", "Marketplace", "Design Systems", "Next-gen E-commerce"],
   authors: [{ name: "NEBULA Team" }],
   creator: "NEBULA",
   publisher: "NEBULA",
@@ -29,13 +29,33 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+    other: [
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '32x32',
+        url: '/favicon-32x32.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        url: '/favicon-16x16.png',
+      },
+    ],
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://nebula-ecommerce.vercel.app',
     siteName: 'NEBULA',
-    title: 'NEBULA | B2B ARCHITECTURAL VOID',
-    description: 'Production-ready B2B marketplace for architectural assets and high-end hardware.',
+    title: 'NEBULA | NEXT-GEN B2B E-COMMERCE',
+    description: 'High-performance B2B marketplace for architectural assets and high-end hardware.',
     images: [
       {
         url: '/og-image.jpg',
@@ -47,9 +67,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NEBULA | B2B ARCHITECTURAL VOID',
+    title: 'NEBULA | NEXT-GEN B2B E-COMMERCE',
     description: 'Next-generation B2B marketplace for architectural assets.',
     images: ['/og-image.jpg'],
+    creator: '@nebula_store',
   },
   robots: {
     index: true,
@@ -60,6 +81,14 @@ export const metadata: Metadata = {
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'google-site-verification-id', // User should replace with actual ID
+    yandex: 'yandex-verification-id',
+    yahoo: 'yahoo-verification-id',
+    other: {
+      me: ['my-contact-url'],
     },
   },
 };

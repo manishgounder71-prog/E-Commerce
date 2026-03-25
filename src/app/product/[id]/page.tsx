@@ -56,9 +56,11 @@ export default async function Page({ params }: Props) {
     name: product.title,
     image: product.image,
     description: product.description,
+    sku: product.id,
+    mpn: product.id,
     brand: {
       '@type': 'Brand',
-      name: product.brand,
+      name: product.brand || 'NEBULA',
     },
     offers: {
       '@type': 'Offer',
@@ -66,11 +68,19 @@ export default async function Page({ params }: Props) {
       priceCurrency: 'INR',
       availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       url: `https://nebula-ecommerce.vercel.app/product/${id}`,
+      priceValidUntil: '2026-12-31',
+      itemCondition: 'https://schema.org/NewCondition',
+      seller: {
+        '@type': 'Organization',
+        name: 'NEBULA',
+      },
     },
     aggregateRating: product.rating ? {
       '@type': 'AggregateRating',
       ratingValue: product.rating,
-      reviewCount: product.reviewCount,
+      reviewCount: product.reviewCount || 0,
+      bestRating: '5',
+      worstRating: '1',
     } : undefined,
   };
 

@@ -138,6 +138,10 @@ export const Navbar = () => {
                                 🚚
                                 Logistics
                             </Link>
+                            <Link href="/team" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-headline uppercase tracking-wider text-neutral-400 hover:text-white hover:bg-white/5 transition-colors">
+                                👥
+                                Team
+                            </Link>
                             <Link href="/settings" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-headline uppercase tracking-wider text-neutral-400 hover:text-white hover:bg-white/5 transition-colors">
                                 ⚙️
                                 Settings
@@ -189,6 +193,12 @@ export const Navbar = () => {
                             </Link>
                             <Link href="/bulk" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
                                 Bulk Orders
+                            </Link>
+                            <Link href="/logistics" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
+                                Logistics
+                            </Link>
+                            <Link href="/team" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
+                                Collective
                             </Link>
                             <Link href="/analytics" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
                                 Analytics

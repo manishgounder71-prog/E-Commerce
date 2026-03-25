@@ -33,17 +33,20 @@ export default function Home() {
                                 SHOP NOW
                             </Link>
                             <Link href="/deals" className="px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 bg-white/5 border border-white/10 text-white font-headline font-bold uppercase text-[9px] sm:text-[10px] lg:text-[11px] tracking-widest rounded-lg hover:bg-white/10 transition-colors active:scale-[0.98]">
-                                TODAY'S DEALS
+                                TODAY&apos;S DEALS
                             </Link>
                         </div>
                     </div>
 
                     {/* Hero Image */}
                     <div className="absolute right-[-15%] sm:right-[-10%] lg:right-[-5%] top-1/2 -translate-y-1/2 w-[85%] h-full pointer-events-none opacity-60 mix-blend-screen transition-all duration-700 hidden sm:block">
-                        <img 
-                            src="/images/hero-smart.png"
+                        <Image 
+                            src="/images/hero-4k.png"
                             alt="Shop Smart"
-                            className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                            fill
+                            priority
+                            quality={100}
+                            className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
                         />
                     </div>
                 </section>

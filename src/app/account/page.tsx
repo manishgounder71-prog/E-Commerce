@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { useStore } from '@/lib/store';
 import { 
@@ -17,6 +17,26 @@ import Link from 'next/link';
 export default function AccountPage() {
     const { cart, wishlist } = useStore();
     const totalSpent = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    useEffect(() => {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        const revealElements = document.querySelectorAll('[data-reveal]');
+        revealElements.forEach(el => observer.observe(el));
+
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <main className="min-h-screen bg-surface text-white">

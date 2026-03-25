@@ -74,7 +74,7 @@ export default function Home() {
                         <CategoryCard 
                             title="Kinetic Module"
                             desc="Advanced mechanical systems and motion control units."
-                            image="https://images.unsplash.com/photo-1569517282132-25e4e1e4ab78?w=600&q=80"
+                            image="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80"
                         />
                         <div className="glass-panel p-6 sm:p-8 lg:p-10 flex flex-col justify-center gap-4 sm:gap-6 rounded-xl border-white/10 hover:border-white/20 transition-all">
                             <Zap className="text-white w-6 h-6 sm:w-8" />

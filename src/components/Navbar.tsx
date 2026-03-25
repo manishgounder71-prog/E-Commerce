@@ -6,7 +6,7 @@ import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
 import { useStore } from '@/lib/store';
 
 export const Navbar = () => {
-    const { searchQuery, setSearchQuery, cart } = useStore();
+    const { searchQuery, setSearchQuery, cart, user } = useStore();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -71,7 +71,12 @@ export const Navbar = () => {
             }`}>
                 {/* Menu Header */}
                 <div className="flex items-center justify-between p-4 border-b border-white/10">
-                    <span className="font-headline text-xl font-bold text-white uppercase">NEBULA</span>
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full border border-white/20 overflow-hidden">
+                            <img src={user.profilePicture} alt="User" className="w-full h-full object-cover grayscale" />
+                        </div>
+                        <span className="font-headline text-lg font-bold text-white uppercase">{user.name.split('_')[0]}</span>
+                    </div>
                     <button 
                         onClick={() => setIsMenuOpen(false)}
                         className="p-2 text-neutral-400 hover:text-white"

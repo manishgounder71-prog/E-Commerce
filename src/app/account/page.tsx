@@ -15,7 +15,7 @@ import {
 import Link from 'next/link';
 
 export default function AccountPage() {
-    const { cart, wishlist } = useStore();
+    const { cart, wishlist, user } = useStore();
     const totalSpent = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
     useEffect(() => {
@@ -50,15 +50,15 @@ export default function AccountPage() {
                             <img 
                                 alt="User Avatar" 
                                 className="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 transition-all duration-700" 
-                                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1587&auto=format&fit=crop" 
+                                src={user.profilePicture} 
                             />
                         </div>
-                        <div className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white flex items-center justify-center text-black border-4 border-surface cursor-pointer hover:bg-neutral-200 transition-colors haptic-btn">
+                        <Link href="/settings" className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white flex items-center justify-center text-black border-4 border-surface cursor-pointer hover:bg-neutral-200 transition-colors haptic-btn">
                             <Settings size={16} />
-                        </div>
+                        </Link>
                     </div>
-                    <h1 className="font-headline text-5xl font-bold tracking-tighter text-white uppercase mb-2">NEBULA_CURATOR_01</h1>
-                    <p className="font-headline text-[10px] tracking-[0.4em] text-neutral-500 uppercase font-bold">Prestige Level 4 // Structural Architect</p>
+                    <h1 className="font-headline text-5xl font-bold tracking-tighter text-white uppercase mb-2">{user.name}</h1>
+                    <p className="font-headline text-[10px] tracking-[0.4em] text-neutral-500 uppercase font-bold">{user.company || 'Structural Architect'} // Prestige Level 4</p>
                 </section>
 
                 {/* Bento Stats */}

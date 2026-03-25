@@ -111,6 +111,14 @@ interface AppState {
     updateAddress: (id: string, address: Partial<Address>) => void;
     defaultAddress: string;
     setDefaultAddress: (id: string) => void;
+    user: {
+        name: string;
+        email: string;
+        phone: string;
+        profilePicture: string;
+        company?: string;
+    };
+    updateUser: (user: Partial<AppState['user']>) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -188,7 +196,18 @@ export const useStore = create<AppState>()(
                 addresses: state.addresses.map(a => a.id === id ? { ...a, ...updates } : a)
             })),
             defaultAddress: 'addr-1',
-            setDefaultAddress: (id) => set({ defaultAddress: id }),
+            setDefaultAddress: (id: string) => set({ defaultAddress: id }),
+
+            user: {
+                name: 'NEBULA_CURATOR_01',
+                email: 'nexus@nebula.void',
+                phone: '+91 98765 43210',
+                profilePicture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1587&auto=format&fit=crop',
+                company: 'Global Architecture Corp'
+            },
+            updateUser: (updates) => set((state) => ({
+                user: { ...state.user, ...updates }
+            })),
         }),
         {
             name: 'nebula-storage',
@@ -198,6 +217,7 @@ export const useStore = create<AppState>()(
                 recentlyViewed: state.recentlyViewed,
                 addresses: state.addresses,
                 defaultAddress: state.defaultAddress,
+                user: state.user,
             }),
         }
     )

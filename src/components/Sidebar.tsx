@@ -18,7 +18,7 @@ import {
 import { useStore } from '@/lib/store';
 
 export const Sidebar = () => {
-    const { activeCategory, setActiveCategory, isMenuOpen, setMenuOpen, cart } = useStore();
+    const { activeCategory, setActiveCategory, isMenuOpen, setMenuOpen, cart, user } = useStore();
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     const categories = [
@@ -53,20 +53,20 @@ export const Sidebar = () => {
 
                 {/* User */}
                 <div className="p-4 border-b border-white/5">
-                    <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                    <Link href="/account" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group">
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-white/10 group-hover:border-white/20">
                             <Image 
                                 alt="User" 
                                 fill
-                                className="object-cover" 
-                                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200" 
+                                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+                                src={user.profilePicture} 
                             />
                         </div>
                         <div>
-                            <p className="font-headline text-xs text-neutral-500 uppercase tracking-wider">Admin Role</p>
-                            <p className="font-headline text-sm text-white font-bold uppercase">Nexus Prime</p>
+                            <p className="font-headline text-xs text-neutral-500 uppercase tracking-wider">{user.company || 'Void Agent'}</p>
+                            <p className="font-headline text-sm text-white font-bold uppercase truncate max-w-[140px]">{user.name}</p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Navigation */}
@@ -152,20 +152,20 @@ export const Sidebar = () => {
             {/* Desktop Sidebar */}
             <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 z-40 bg-neutral-900/60 backdrop-blur-xl border-r border-white/5 flex-col pt-20 pb-6 px-4 gap-4">
                 {/* User */}
-                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                <Link href="/account" className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group">
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-white/10 group-hover:border-white/20">
                         <Image 
                             alt="User" 
                             fill
-                            className="object-cover" 
-                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200" 
+                            className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+                            src={user.profilePicture} 
                         />
                     </div>
                     <div>
-                        <p className="font-headline text-[9px] text-neutral-500 uppercase tracking-wider">Admin Role</p>
-                        <p className="font-headline text-[11px] text-white font-bold uppercase tracking-wide">Nexus Prime</p>
+                        <p className="font-headline text-[9px] text-neutral-500 uppercase tracking-wider">{user.company || 'Void Agent'}</p>
+                        <p className="font-headline text-[11px] text-white font-bold uppercase tracking-wide truncate max-w-[120px]">{user.name}</p>
                     </div>
-                </div>
+                </Link>
 
                 {/* Nav */}
                 <nav className="flex-1 overflow-y-auto space-y-6">

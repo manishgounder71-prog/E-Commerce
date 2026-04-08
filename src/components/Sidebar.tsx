@@ -191,7 +191,7 @@ export const Sidebar = () => {
                                 alt="User" 
                                 fill
                                 className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
-                                src={user.profilePicture} 
+                                src={user.profilePicture || '/default-avatar.png'} 
                             />
                         </div>
                         <div>

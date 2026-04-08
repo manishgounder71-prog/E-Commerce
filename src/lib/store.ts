@@ -81,10 +81,11 @@ export interface AppState {
         id?: string;
         name: string;
         email: string;
-        phone: string;
-        profilePicture: string;
+        phone?: string;
+        profilePicture?: string;
         company?: string;
     } | null;
+    setUser: (user: AppState['user']) => void;
     updateUser: (user: Partial<NonNullable<AppState['user']>> | null) => void;
     products: Product[];
     setProducts: (products: Product[]) => void;
@@ -170,6 +171,7 @@ export const useStore = create<AppState>()(
             setDefaultAddress: (id: string) => set({ defaultAddress: id }),
 
             user: null,
+            setUser: (userData: AppState['user']) => set({ user: userData }),
             updateUser: (updates) => set((state) => ({
                 user: updates === null ? null : (state.user ? { ...state.user, ...(updates as Partial<NonNullable<AppState['user']>>) } : updates as NonNullable<AppState['user']>)
             })),

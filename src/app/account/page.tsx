@@ -64,7 +64,7 @@ export default function AccountPage() {
                             <Image 
                                 alt="User Avatar" 
                                 className="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 transition-all duration-700" 
-                                src={user.profilePicture} 
+                                src={user.profilePicture || '/default-avatar.png'} 
                                 width={160}
                                 height={160}
                             />

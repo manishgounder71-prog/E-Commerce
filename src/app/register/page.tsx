@@ -2,37 +2,43 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, ArrowRight, ArrowLeft, Zap, CheckCircle2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Eye, EyeOff, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, Loader2, Mail, Lock, User } from 'lucide-react';
+import { signUp, resendVerificationEmail } from '@/lib/auth';
+import { useStore } from '@/lib/store';
 
 export default function RegisterPage() {
+    const router = useRouter();
+    const { setUser } = useStore();
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
         confirmPassword: '',
-        company: '',
         acceptTerms: false
     });
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [verificationSent, setVerificationSent] = useState(false);
+    const [resendLoading, setResendLoading] = useState(false);
 
     const validateStep1 = () => {
         const newErrors: Record<string, string> = {};
-        if (!formData.name.trim()) newErrors.name = 'Required';
-        if (!formData.email.trim()) newErrors.email = 'Required';
-        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid format';
+        if (!formData.name.trim()) newErrors.name = 'Name is required';
+        if (!formData.email.trim()) newErrors.email = 'Email is required';
+        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Please enter a valid email';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const validateStep2 = () => {
         const newErrors: Record<string, string> = {};
-        if (!formData.password) newErrors.password = 'Required';
-        else if (formData.password.length < 8) newErrors.password = 'Minimum 8 characters';
-        if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Phrases do not match';
-        if (!formData.acceptTerms) newErrors.acceptTerms = 'Required';
+        if (!formData.password) newErrors.password = 'Password is required';
+        else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+        if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+        if (!formData.acceptTerms) newErrors.acceptTerms = 'You must accept the terms';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -48,22 +54,98 @@ export default function RegisterPage() {
         if (!validateStep2()) return;
         
         setIsLoading(true);
+        setErrors({});
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            window.location.href = '/account';
-        } catch {
-            setErrors({ submit: 'Registration failed. Please try again.' });
+            const { data, error } = await signUp(formData.email, formData.password, formData.name);
+            
+            if (error) {
+                setErrors({ submit: error.message });
+                setIsLoading(false);
+                return;
+            }
+
+                // Check if email confirmation is required
+            if (data.user && !data.user.email_confirmed_at) {
+                setVerificationSent(true);
+            } else if (data.user) {
+                // User created and confirmed
+                setUser({
+                    id: data.user.id,
+                    name: formData.name,
+                    email: formData.email,
+                });
+                router.push('/account');
+            }
+        } catch (err) {
+            setErrors({ submit: 'An unexpected error occurred. Please try again.' });
         } finally {
             setIsLoading(false);
         }
     };
 
+    const handleResendVerification = async () => {
+        setResendLoading(true);
+        const { error } = await resendVerificationEmail(formData.email);
+        setResendLoading(false);
+        
+        if (error) {
+            setErrors({ submit: error.message });
+        } else {
+            setErrors({});
+            alert('Verification email sent! Please check your inbox.');
+        }
+    };
+
+    if (verificationSent) {
+        return (
+            <main className="min-h-screen bg-surface text-white flex items-center justify-center px-4">
+                <div className="max-w-md w-full">
+                    <div className="text-center mb-8">
+                        <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Mail size={40} className="text-green-500" />
+                        </div>
+                        <h1 className="text-3xl font-headline font-bold text-white uppercase tracking-wider mb-4">
+                            Check Your Email
+                        </h1>
+                        <p className="text-neutral-400 mb-2">
+                            We've sent a verification link to
+                        </p>
+                        <p className="text-white font-semibold mb-6">{formData.email}</p>
+                        <p className="text-neutral-500 text-sm mb-8">
+                            Click the link in the email to verify your account. If you don't see it, check your spam folder.
+                        </p>
+                        <div className="space-y-3">
+                            <button
+                                onClick={handleResendVerification}
+                                disabled={resendLoading}
+                                className="w-full py-4 bg-white text-black font-headline font-bold uppercase text-xs tracking-wider rounded-lg hover:bg-neutral-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                            >
+                                {resendLoading ? (
+                                    <Loader2 size={16} className="animate-spin" />
+                                ) : (
+                                    'Resend Verification Email'
+                                )}
+                            </button>
+                            <Link 
+                                href="/login"
+                                className="block w-full py-4 bg-white/5 border border-white/10 text-white font-headline font-bold uppercase text-xs tracking-wider rounded-lg hover:bg-white/10 transition-colors"
+                            >
+                                Back to Login
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        );
+    }
+
     return (
         <main className="min-h-screen bg-surface text-white flex">
             {/* Left Panel - Form */}
-            <div className="flex-1 flex flex-col justify-center px-8 md:px-20 lg:px-32">
+            <div className="flex-1 flex flex-col justify-center px-8 md:px-16 lg:px-24">
                 <div className="max-w-md w-full mx-auto">
-                    <Link href="/" className="font-headline text-2xl font-bold tracking-tighter text-white uppercase mb-8 inline-block hover:animate-drift">
+                    <Link href="/" className="font-headline text-2xl font-bold tracking-tighter text-white uppercase mb-12 inline-block">
                         NEBULA
                     </Link>
 
@@ -73,75 +155,68 @@ export default function RegisterPage() {
                                 <ArrowLeft size={16} />
                             </button>
                         )}
-                        <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tighter text-white uppercase">
-                            {step === 1 ? 'IDENTITY' : 'SECURE'}
+                        <h1 className="font-headline text-3xl sm:text-4xl font-black tracking-tighter text-white uppercase">
+                            Create Account
                         </h1>
                     </div>
-                    <p className="font-headline text-[10px] tracking-[0.4em] text-neutral-500 uppercase font-bold mb-12">
-                        {step === 1 ? 'Establish your architectural identity' : 'Configure access credentials'}
+                    <p className="font-headline text-xs text-neutral-500 uppercase tracking-wider mb-8">
+                        {step === 1 ? 'Enter your details to get started' : 'Set up your password'}
                     </p>
 
                     {/* Progress */}
-                    <div className="flex items-center gap-3 mb-10">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-headline font-bold text-xs ${step >= 1 ? 'bg-white text-black' : 'bg-surface-container text-neutral-600'}`}>
-                            {step > 1 ? <CheckCircle2 size={14} /> : '01'}
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-headline font-bold text-xs ${step >= 1 ? 'bg-white text-black' : 'bg-neutral-800 text-neutral-600'}`}>
+                            {step > 1 ? <CheckCircle2 size={14} /> : '1'}
                         </div>
-                        <div className={`flex-1 h-0.5 ${step >= 2 ? 'bg-white' : 'bg-surface-container'}`} />
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-headline font-bold text-xs ${step >= 2 ? 'bg-white text-black' : 'bg-surface-container text-neutral-600'}`}>
-                            02
+                        <div className={`flex-1 h-0.5 ${step >= 2 ? 'bg-white' : 'bg-neutral-800'}`} />
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-headline font-bold text-xs ${step >= 2 ? 'bg-white text-black' : 'bg-neutral-800 text-neutral-600'}`}>
+                            2
                         </div>
                     </div>
 
                     <form onSubmit={handleSubmit}>
                         {step === 1 && (
-                            <div className="space-y-6">
+                            <div className="space-y-5">
                                 <div>
-                                    <label className="block text-[10px] font-headline text-neutral-500 uppercase tracking-widest mb-3">
-                                        Architect Name
+                                    <label className="block text-xs font-headline text-neutral-400 uppercase tracking-wider mb-2">
+                                        Full Name
                                     </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className={`w-full px-5 py-4 bg-surface-container-low border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-lg text-white font-headline text-sm focus:border-white/30 focus:outline-none transition-colors`}
-                                        placeholder="Enter your name"
-                                    />
-                                    {errors.name && <p className="text-[9px] text-red-400 mt-1 font-headline uppercase">{errors.name}</p>}
+                                    <div className="relative">
+                                        <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                        <input
+                                            type="text"
+                                            required
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                            className={`w-full pl-12 pr-4 py-3.5 bg-neutral-900 border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-lg text-white placeholder:text-neutral-600 focus:border-white/30 focus:outline-none transition-colors`}
+                                            placeholder="John Doe"
+                                        />
+                                    </div>
+                                    {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-headline text-neutral-500 uppercase tracking-widest mb-3">
-                                        Nexus ID / Email
+                                    <label className="block text-xs font-headline text-neutral-400 uppercase tracking-wider mb-2">
+                                        Email Address
                                     </label>
-                                    <input
-                                        type="email"
-                                        required
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className={`w-full px-5 py-4 bg-surface-container-low border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-lg text-white font-headline text-sm focus:border-white/30 focus:outline-none transition-colors`}
-                                        placeholder="architect@nebula.void"
-                                    />
-                                    {errors.email && <p className="text-[9px] text-red-400 mt-1 font-headline uppercase">{errors.email}</p>}
-                                </div>
-
-                                <div>
-                                    <label className="block text-[10px] font-headline text-neutral-500 uppercase tracking-widest mb-3">
-                                        Organization (Optional)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.company}
-                                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                                        className="w-full px-5 py-4 bg-surface-container-low border border-white/10 rounded-lg text-white font-headline text-sm focus:border-white/30 focus:outline-none transition-colors"
-                                        placeholder="Company name"
-                                    />
+                                    <div className="relative">
+                                        <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                        <input
+                                            type="email"
+                                            required
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                            className={`w-full pl-12 pr-4 py-3.5 bg-neutral-900 border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-lg text-white placeholder:text-neutral-600 focus:border-white/30 focus:outline-none transition-colors`}
+                                            placeholder="you@example.com"
+                                        />
+                                    </div>
+                                    {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
                                 </div>
 
                                 <button 
                                     type="button" 
                                     onClick={handleNext}
-                                    className="w-full py-5 bg-white text-black font-headline font-bold uppercase text-[11px] tracking-[0.2em] rounded-md hover:bg-neutral-200 transition-colors haptic-btn flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-white text-black font-headline font-bold uppercase text-xs tracking-wider rounded-lg hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2"
                                 >
                                     Continue
                                     <ArrowRight size={16} />
@@ -150,24 +225,26 @@ export default function RegisterPage() {
                         )}
 
                         {step === 2 && (
-                            <div className="space-y-6">
+                            <div className="space-y-5">
                                 {errors.submit && (
-                                    <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-                                        <p className="text-[10px] font-headline text-red-400 uppercase tracking-widest">{errors.submit}</p>
+                                    <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
+                                        <AlertCircle size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
+                                        <p className="text-sm text-red-400">{errors.submit}</p>
                                     </div>
                                 )}
 
                                 <div>
-                                    <label className="block text-[10px] font-headline text-neutral-500 uppercase tracking-widest mb-3">
-                                        Security Phrase
+                                    <label className="block text-xs font-headline text-neutral-400 uppercase tracking-wider mb-2">
+                                        Password
                                     </label>
                                     <div className="relative">
+                                        <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
                                         <input
                                             type={showPassword ? 'text' : 'password'}
                                             required
                                             value={formData.password}
                                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                            className={`w-full px-5 py-4 bg-surface-container-low border ${errors.password ? 'border-red-500' : 'border-white/10'} rounded-lg text-white font-headline text-sm focus:border-white/30 focus:outline-none transition-colors`}
+                                            className={`w-full pl-12 pr-12 py-3.5 bg-neutral-900 border ${errors.password ? 'border-red-500' : 'border-white/10'} rounded-lg text-white placeholder:text-neutral-600 focus:border-white/30 focus:outline-none transition-colors`}
                                             placeholder="Minimum 8 characters"
                                         />
                                         <button
@@ -178,52 +255,58 @@ export default function RegisterPage() {
                                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                         </button>
                                     </div>
-                                    {errors.password && <p className="text-[9px] text-red-400 mt-1 font-headline uppercase">{errors.password}</p>}
+                                    {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-headline text-neutral-500 uppercase tracking-widest mb-3">
-                                        Confirm Phrase
+                                    <label className="block text-xs font-headline text-neutral-400 uppercase tracking-wider mb-2">
+                                        Confirm Password
                                     </label>
-                                    <input
-                                        type="password"
-                                        required
-                                        value={formData.confirmPassword}
-                                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                        className={`w-full px-5 py-4 bg-surface-container-low border ${errors.confirmPassword ? 'border-red-500' : 'border-white/10'} rounded-lg text-white font-headline text-sm focus:border-white/30 focus:outline-none transition-colors`}
-                                        placeholder="Confirm security phrase"
-                                    />
-                                    {errors.confirmPassword && <p className="text-[9px] text-red-400 mt-1 font-headline uppercase">{errors.confirmPassword}</p>}
+                                    <div className="relative">
+                                        <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
+                                        <input
+                                            type="password"
+                                            required
+                                            value={formData.confirmPassword}
+                                            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                            className={`w-full pl-12 pr-4 py-3.5 bg-neutral-900 border ${errors.confirmPassword ? 'border-red-500' : 'border-white/10'} rounded-lg text-white placeholder:text-neutral-600 focus:border-white/30 focus:outline-none transition-colors`}
+                                            placeholder="Confirm your password"
+                                        />
+                                    </div>
+                                    {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>}
                                 </div>
 
-                                <div className="p-5 rounded-lg bg-surface-container-low border border-white/5">
+                                <div className="p-4 rounded-lg bg-neutral-900 border border-white/5">
                                     <label className="flex items-start gap-3 cursor-pointer">
                                         <input 
                                             type="checkbox" 
                                             checked={formData.acceptTerms}
                                             onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
-                                            className="w-4 h-4 mt-0.5 rounded bg-surface-container-low border-white/20 text-white focus:ring-white/30" 
+                                            className="w-4 h-4 mt-0.5 rounded bg-neutral-900 border-white/20 text-white focus:ring-white/30" 
                                         />
-                                        <span className="text-[10px] font-headline text-neutral-400 leading-relaxed">
-                                            I accept the <span className="text-white">Architect Protocol</span> and <span className="text-white">Void Terms</span>. My data will be processed under quantum encryption standards.
+                                        <span className="text-xs text-neutral-400 leading-relaxed">
+                                            I agree to the{' '}
+                                            <Link href="/terms" className="text-white hover:underline">Terms of Service</Link>
+                                            {' '}and{' '}
+                                            <Link href="/privacy" className="text-white hover:underline">Privacy Policy</Link>
                                         </span>
                                     </label>
-                                    {errors.acceptTerms && <p className="text-[9px] text-red-400 mt-2 font-headline uppercase">{errors.acceptTerms}</p>}
+                                    {errors.acceptTerms && <p className="text-red-400 text-xs mt-2">{errors.acceptTerms}</p>}
                                 </div>
 
                                 <button 
                                     type="submit" 
                                     disabled={isLoading}
-                                    className="w-full py-5 bg-white text-black font-headline font-bold uppercase text-[11px] tracking-[0.2em] rounded-md hover:bg-neutral-200 transition-colors haptic-btn flex items-center justify-center gap-2 disabled:opacity-50"
+                                    className="w-full py-4 bg-white text-black font-headline font-bold uppercase text-xs tracking-wider rounded-lg hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {isLoading ? (
                                         <>
-                                            <Zap size={16} className="animate-pulse" />
-                                            Creating Identity...
+                                            <Loader2 size={16} className="animate-spin" />
+                                            Creating Account...
                                         </>
                                     ) : (
                                         <>
-                                            Initialize Access
+                                            Create Account
                                             <ArrowRight size={16} />
                                         </>
                                     )}
@@ -232,25 +315,24 @@ export default function RegisterPage() {
                         )}
                     </form>
 
-                    <div className="mt-12 pt-8 border-t border-white/5 text-center">
-                        <p className="text-[10px] font-headline text-neutral-500 uppercase tracking-widest">
-                            Already initiated?
+                    <div className="mt-8 pt-6 border-t border-white/5 text-center">
+                        <p className="text-sm text-neutral-500">
+                            Already have an account?{' '}
+                            <Link href="/login" className="text-white font-semibold hover:underline">
+                                Sign in
+                            </Link>
                         </p>
-                        <Link href="/login" className="inline-flex items-center gap-2 mt-3 text-white font-headline text-sm uppercase tracking-widest hover:text-neutral-300 transition-colors group">
-                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                            Return to Access
-                        </Link>
                     </div>
                 </div>
             </div>
 
             {/* Right Panel - Visual */}
-            <div className="hidden lg:block w-1/2 bg-gradient-to-br from-surface-container-low to-surface-container-high relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_50%)]" />
-                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent" />
+            <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-neutral-900 to-neutral-950 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.03)_0%,transparent_50%)]" />
+                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/30 to-transparent" />
                 <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                        <p className="font-headline text-[200px] font-black text-white/5 leading-none">N</p>
+                        <p className="font-headline text-[180px] font-black text-white/5 leading-none">N</p>
                     </div>
                 </div>
             </div>

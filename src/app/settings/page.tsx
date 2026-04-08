@@ -39,8 +39,8 @@ export default function SettingsPage() {
                 name: user.name,
                 email: user.email,
                 company: user.company || '',
-                phone: user.phone,
-                profilePicture: user.profilePicture
+                phone: user.phone || '',
+                profilePicture: user.profilePicture || ''
             });
         }
     }, [user]);
@@ -130,7 +130,7 @@ export default function SettingsPage() {
                                         <div className="relative group">
                                             <div className="w-32 h-32 rounded-full border-2 border-white/10 p-1 overflow-hidden">
                                                 <Image 
-                                                    src={profile.profilePicture} 
+                                                    src={profile.profilePicture || '/default-avatar.png'} 
                                                     alt="Profile" 
                                                     className="w-full h-full object-cover rounded-full grayscale hover:grayscale-0 transition-all duration-500"
                                                     width={128}

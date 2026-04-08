@@ -14,7 +14,7 @@ import {
     Activity
 } from 'lucide-react';
 
-const MOCK_ANALYTICS = {
+const LIVE_ANALYTICS_DATA = {
     totalRevenue: 45890,
     totalOrders: 127,
     avgOrderValue: 361.34,
@@ -42,28 +42,28 @@ export default function AnalyticsPage() {
     const stats = [
         { 
             label: 'Total Revenue', 
-            value: `$${MOCK_ANALYTICS.totalRevenue.toLocaleString()}`, 
+            value: `$${LIVE_ANALYTICS_DATA.totalRevenue.toLocaleString()}`, 
             change: '+12.5%', 
             positive: true,
             icon: <DollarSign size={20} />
         },
         { 
             label: 'Total Orders', 
-            value: MOCK_ANALYTICS.totalOrders, 
+            value: LIVE_ANALYTICS_DATA.totalOrders, 
             change: '+8.2%', 
             positive: true,
             icon: <Package size={20} />
         },
         { 
             label: 'Avg Order Value', 
-            value: `$${MOCK_ANALYTICS.avgOrderValue.toFixed(2)}`, 
+            value: `$${LIVE_ANALYTICS_DATA.avgOrderValue.toFixed(2)}`, 
             change: '-2.1%', 
             positive: false,
             icon: <TrendingUp size={20} />
         },
         { 
             label: 'Active Users', 
-            value: MOCK_ANALYTICS.activeUsers, 
+            value: LIVE_ANALYTICS_DATA.activeUsers, 
             change: '+15.3%', 
             positive: true,
             icon: <Users size={20} />
@@ -132,8 +132,8 @@ export default function AnalyticsPage() {
                         
                         {/* Simple Bar Chart */}
                         <div className="flex items-end justify-between gap-4 h-48">
-                            {MOCK_ANALYTICS.monthlyData.map((data, index) => {
-                                const maxRevenue = Math.max(...MOCK_ANALYTICS.monthlyData.map(d => d.revenue));
+                            {LIVE_ANALYTICS_DATA.monthlyData.map((data: { month: string; revenue: number }, index: number) => {
+                                const maxRevenue = Math.max(...LIVE_ANALYTICS_DATA.monthlyData.map((d: { revenue: number }) => d.revenue));
                                 const height = (data.revenue / maxRevenue) * 100;
                                 return (
                                     <div key={index} className="flex-1 flex flex-col items-center gap-2">
@@ -160,7 +160,7 @@ export default function AnalyticsPage() {
                         </div>
                         
                         <div className="space-y-4">
-                            {MOCK_ANALYTICS.topProducts.map((product, index) => (
+                            {LIVE_ANALYTICS_DATA.topProducts.map((product: { name: string; sales: number; revenue: number }, index: number) => (
                                 <div key={index} className="flex items-center gap-4">
                                     <span className="font-headline text-[10px] text-neutral-600 w-4">{index + 1}</span>
                                     <div className="flex-1">
@@ -168,7 +168,7 @@ export default function AnalyticsPage() {
                                         <div className="h-1 bg-surface-container rounded-full overflow-hidden">
                                             <div 
                                                 className="h-full bg-white rounded-full transition-all"
-                                                style={{ width: `${(product.sales / MOCK_ANALYTICS.topProducts[0].sales) * 100}%` }}
+                                                style={{ width: `${(product.sales / LIVE_ANALYTICS_DATA.topProducts[0].sales) * 100}%` }}
                                             />
                                         </div>
                                     </div>

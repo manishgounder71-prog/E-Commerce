@@ -1,0 +1,22 @@
+{
+  "name": "NEBULA Store",
+  "short_name": "NEBULA",
+  "description": "Your trusted online store for quality products at great prices",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#131313",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["shopping", "e-commerce"]
+}

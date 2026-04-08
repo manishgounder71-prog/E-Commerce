@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Navbar } from '@/components/Navbar';
-import { useStore, MOCK_PRODUCTS } from '@/lib/store';
+import { useStore } from '@/lib/store';
 import { 
     Package, 
     Truck, 
@@ -15,14 +16,14 @@ import {
 } from 'lucide-react';
 
 export default function BulkPage() {
-    const { addToCart } = useStore();
+    const { products, addToCart } = useStore();
     const [selectedProduct, setSelectedProduct] = useState<string>('');
     const [quantity, setQuantity] = useState(50);
     const [bulkCart, setBulkCart] = useState<{ productId: string; quantity: number }[]>([]);
     const [submitted, setSubmitted] = useState(false);
     const [bulkOrderRef] = useState(() => `BULK-${Math.random().toString(36).substring(2, 10).toUpperCase()}`);
 
-    const currentProduct = MOCK_PRODUCTS.find(p => p.id === selectedProduct);
+    const currentProduct = products.find(p => p.id === selectedProduct);
 
     const bulkDiscounts = [
         { min: 10, max: 49, discount: 0 },
@@ -63,7 +64,7 @@ export default function BulkPage() {
     const submitBulkOrder = () => {
         if (bulkCart.length > 0) {
             bulkCart.forEach(item => {
-                const product = MOCK_PRODUCTS.find(p => p.id === item.productId);
+                const product = products.find(p => p.id === item.productId);
                 if (product) {
                     addToCart(product, item.quantity);
                 }
@@ -73,7 +74,7 @@ export default function BulkPage() {
     };
 
     const bulkOrderTotal = bulkCart.reduce((acc, item) => {
-        const product = MOCK_PRODUCTS.find(p => p.id === item.productId);
+        const product = products.find(p => p.id === item.productId);
         if (product) {
             const itemDiscount = getDiscount(item.quantity);
             const itemTotal = product.price * item.quantity * (1 - itemDiscount / 100);
@@ -135,7 +136,7 @@ export default function BulkPage() {
                             </div>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {MOCK_PRODUCTS.map((product) => (
+                                {products.map((product) => (
                                     <button
                                         key={product.id}
                                         onClick={() => setSelectedProduct(product.id)}
@@ -218,7 +219,7 @@ export default function BulkPage() {
                                 
                                 <div className="space-y-4 mb-6">
                                     {bulkCart.map((item, index) => {
-                                        const product = MOCK_PRODUCTS.find(p => p.id === item.productId);
+                                        const product = products.find(p => p.id === item.productId);
                                         const itemDiscount = getDiscount(item.quantity);
                                         const itemTotal = product ? product.price * item.quantity * (1 - itemDiscount / 100) : 0;
                                         return (
@@ -255,7 +256,14 @@ export default function BulkPage() {
                             {currentProduct ? (
                                 <>
                                     <div className="mb-6">
-                                        <img src={currentProduct.image} alt={currentProduct.title} className="w-full aspect-square object-cover rounded-xl mb-4" />
+                                        <div className="relative w-full aspect-square overflow-hidden rounded-xl mb-4">
+                                            <Image 
+                                                src={currentProduct.image} 
+                                                alt={currentProduct.title} 
+                                                fill 
+                                                className="object-cover" 
+                                            />
+                                        </div>
                                         <p className="font-headline text-lg font-bold text-white uppercase">{currentProduct.title}</p>
                                     </div>
 

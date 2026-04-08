@@ -12,11 +12,11 @@ import {
     LogOut,
     MapPin
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function AccountPage() {
     const { cart, wishlist, user } = useStore();
-    const totalSpent = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
     useEffect(() => {
         const observerOptions = {
@@ -38,6 +38,20 @@ export default function AccountPage() {
         return () => observer.disconnect();
     }, []);
 
+    if (!user) {
+        return (
+            <main className="min-h-screen bg-surface text-white flex items-center justify-center">
+                <Navbar />
+                <div className="text-center">
+                    <p className="font-headline text-[10px] tracking-[0.4em] text-neutral-500 uppercase font-black mb-4">Unauthorized Access</p>
+                    <Link href="/discover" className="font-headline text-sm text-white border-b border-white hover:text-neutral-400 transition-colors uppercase tracking-widest">Return to Grid</Link>
+                </div>
+            </main>
+        );
+    }
+
+    const totalSpent = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
     return (
         <main className="min-h-screen bg-surface text-white">
             <Navbar />
@@ -47,10 +61,12 @@ export default function AccountPage() {
                 <section className="text-center mb-16" data-reveal>
                     <div className="inline-block relative mb-8 group">
                         <div className="w-40 h-40 rounded-full border border-white/10 p-2 glass-panel overflow-hidden">
-                            <img 
+                            <Image 
                                 alt="User Avatar" 
                                 className="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 transition-all duration-700" 
                                 src={user.profilePicture} 
+                                width={160}
+                                height={160}
                             />
                         </div>
                         <Link href="/settings" className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white flex items-center justify-center text-black border-4 border-surface cursor-pointer hover:bg-neutral-200 transition-colors haptic-btn">

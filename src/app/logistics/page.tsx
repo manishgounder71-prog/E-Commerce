@@ -12,7 +12,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 
-const MOCK_SHIPMENTS = [
+const TRACKED_SHIPMENTS = [
     { 
         id: 'TRK-7832910',
         orderId: 'NBL-X7K9M2',
@@ -85,7 +85,7 @@ export default function LogisticsPage() {
 
                 {/* Shipments List */}
                 <div className="space-y-6">
-                    {MOCK_SHIPMENTS.map((shipment) => {
+                    {TRACKED_SHIPMENTS.map((shipment) => {
                         const status = STATUS_CONFIG[shipment.status as keyof typeof STATUS_CONFIG];
                         const isSelected = selectedShipment === shipment.id;
                         

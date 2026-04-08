@@ -16,10 +16,16 @@ export type Product = {
     id: string;
     title: string;
     price: number;
+    original_price?: number;
     image: string;
     category: string;
     description?: string;
     stock: number;
+    rating?: number;
+    review_count?: number;
+    brand?: string;
+    seller?: string;
+    variants?: any[];
     created_at: string;
 };
 

@@ -16,6 +16,7 @@ import {
     MapPin,
     Plus
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function SettingsPage() {
@@ -25,24 +26,24 @@ export default function SettingsPage() {
     const [showPassword, setShowPassword] = useState(false);
     
     const [profile, setProfile] = useState({
-        name: user.name,
-        email: user.email,
-        company: user.company || '',
-        phone: user.phone,
-        profilePicture: user.profilePicture
+        name: user?.name || '',
+        email: user?.email || '',
+        company: user?.company || '',
+        phone: user?.phone || '',
+        profilePicture: user?.profilePicture || ''
     });
 
     useEffect(() => {
-        setProfile({
-            name: user.name,
-            email: user.email,
-            company: user.company || '',
-            phone: user.phone,
-            profilePicture: user.profilePicture
-        });
+        if (user) {
+            setProfile({
+                name: user.name,
+                email: user.email,
+                company: user.company || '',
+                phone: user.phone,
+                profilePicture: user.profilePicture
+            });
+        }
     }, [user]);
-
-    const activeAddress = addresses.find(a => a.id === defaultAddress) || addresses[0];
 
     const [notifications, setNotifications] = useState({
         orders: true,
@@ -56,6 +57,20 @@ export default function SettingsPage() {
         compactView: false,
         autoSync: true
     });
+
+    if (!user) {
+        return (
+            <main className="min-h-screen bg-surface text-white flex items-center justify-center">
+                <Navbar />
+                <div className="text-center">
+                    <p className="font-headline text-[10px] tracking-[0.4em] text-neutral-500 uppercase font-black mb-4">Unauthorized Access</p>
+                    <Link href="/discover" className="font-headline text-sm text-white border-b border-white hover:text-neutral-400 transition-colors uppercase tracking-widest">Return to Grid</Link>
+                </div>
+            </main>
+        );
+    }
+
+    const activeAddress = addresses.find(a => a.id === defaultAddress) || addresses[0];
 
     const tabs = [
         { id: 'profile', label: 'Profile', icon: <User size={18} /> },
@@ -114,10 +129,12 @@ export default function SettingsPage() {
                                     <div className="flex flex-col sm:flex-row items-center gap-8">
                                         <div className="relative group">
                                             <div className="w-32 h-32 rounded-full border-2 border-white/10 p-1 overflow-hidden">
-                                                <img 
+                                                <Image 
                                                     src={profile.profilePicture} 
                                                     alt="Profile" 
                                                     className="w-full h-full object-cover rounded-full grayscale hover:grayscale-0 transition-all duration-500"
+                                                    width={128}
+                                                    height={128}
                                                 />
                                             </div>
                                             <label className="absolute bottom-0 right-0 w-10 h-10 bg-white text-black rounded-full flex items-center justify-center cursor-pointer hover:bg-neutral-200 transition-colors shadow-xl">

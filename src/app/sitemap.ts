@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next';
-import { MOCK_PRODUCTS } from '@/lib/store';
+import { getProducts } from '@/lib/supabase';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://nebula-ecommerce.vercel.app';
+  const products = await getProducts();
 
   // Core static routes
   const routes = [
@@ -22,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Dynamic product routes
-  const productRoutes = MOCK_PRODUCTS.map((product) => ({
+  const productRoutes = products.map((product) => ({
     url: `${baseUrl}/product/${product.id}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,

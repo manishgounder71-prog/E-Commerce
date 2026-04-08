@@ -2,14 +2,15 @@
 
 import React from 'react';
 import { Navbar } from '@/components/Navbar';
-import { useStore, MOCK_PRODUCTS } from '@/lib/store';
+import { useStore } from '@/lib/store';
+import Image from 'next/image';
 import { Heart, ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WishlistPage() {
-    const { wishlist, addToCart, removeFromWishlist } = useStore();
+    const { products, wishlist, addToCart, removeFromWishlist } = useStore();
     
-    const wishlistProducts = MOCK_PRODUCTS.filter(p => wishlist.includes(p.id));
+    const wishlistProducts = products.filter(p => wishlist.includes(p.id));
 
     return (
         <main className="min-h-screen bg-surface text-white">
@@ -44,11 +45,13 @@ export default function WishlistPage() {
                         {wishlistProducts.map((product) => (
                             <div key={product.id} className="group relative bg-surface-container-low rounded-xl overflow-hidden border border-white/5 hover:border-white/20 transition-all">
                                 <Link href={`/product/${product.id}`} className="block">
-                                    <div className="aspect-[4/5] overflow-hidden">
-                                        <img 
+                                    <div className="relative aspect-[4/5] overflow-hidden">
+                                        <Image 
                                             src={product.image} 
                                             alt={product.title}
-                                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
+                                            fill
+                                            className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                                         />
                                     </div>
                                 </Link>

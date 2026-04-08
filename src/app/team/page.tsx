@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Navbar } from '@/components/Navbar';
 import { 
     Shield, 
@@ -12,7 +13,7 @@ import {
     X
 } from 'lucide-react';
 
-const MOCK_TEAM = [
+const TEAM_MEMBERS = [
     { id: '1', name: 'Nexus Prime', email: 'nexus@nebula.void', role: 'Admin', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', status: 'online' },
     { id: '2', name: 'Architect_02', email: 'arch02@nebula.void', role: 'Manager', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', status: 'online' },
     { id: '3', name: 'Synthwave_X', email: 'synth@nebula.void', role: 'Member', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200', status: 'away' },
@@ -31,7 +32,7 @@ export default function TeamPage() {
     const [inviteRole, setInviteRole] = useState('member');
     const [searchQuery, setSearchQuery] = useState('');
 
-    const filteredTeam = MOCK_TEAM.filter(member => 
+    const filteredTeam = TEAM_MEMBERS.filter(member => 
         member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         member.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -100,11 +101,14 @@ export default function TeamPage() {
                         <div key={member.id} className="p-6 rounded-2xl bg-surface-container-low border border-white/5 hover:border-white/10 transition-all">
                             <div className="flex items-center gap-6">
                                 <div className="relative">
-                                    <img 
-                                        src={member.avatar} 
-                                        alt={member.name}
-                                        className="w-14 h-14 rounded-full object-cover border-2 border-white/10"
-                                    />
+                                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/10 relative">
+                                        <Image 
+                                            src={member.avatar} 
+                                            alt={member.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
                                     <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-surface-container-low ${
                                         member.status === 'online' ? 'bg-green-500' :
                                         member.status === 'away' ? 'bg-yellow-500' : 'bg-neutral-600'

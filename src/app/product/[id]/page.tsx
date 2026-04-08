@@ -1,5 +1,5 @@
 import { Metadata, ResolvingMetadata } from 'next';
-import { MOCK_PRODUCTS } from '@/lib/store';
+import { getProduct } from '@/lib/supabase';
 import ProductClient from './ProductClient';
 import { notFound } from 'next/navigation';
 
@@ -13,7 +13,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { id } = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.id === id);
+  const product = await getProduct(id);
 
   if (!product) {
     return {
@@ -43,7 +43,7 @@ export async function generateMetadata(
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.id === id);
+  const product = await getProduct(id);
 
   if (!product) {
     notFound();
@@ -66,7 +66,7 @@ export default async function Page({ params }: Props) {
       '@type': 'Offer',
       price: product.price,
       priceCurrency: 'INR',
-      availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      availability: (product.stock > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       url: `https://nebula-ecommerce.vercel.app/product/${id}`,
       priceValidUntil: '2026-12-31',
       itemCondition: 'https://schema.org/NewCondition',
@@ -78,7 +78,7 @@ export default async function Page({ params }: Props) {
     aggregateRating: product.rating ? {
       '@type': 'AggregateRating',
       ratingValue: product.rating,
-      reviewCount: product.reviewCount || 0,
+      reviewCount: product.review_count || 0,
       bestRating: '5',
       worstRating: '1',
     } : undefined,

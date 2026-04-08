@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
+import Image from 'next/image';
 import { useStore } from '@/lib/store';
 
 export const Navbar = () => {
@@ -72,10 +73,29 @@ export const Navbar = () => {
                 {/* Menu Header */}
                 <div className="flex items-center justify-between p-4 border-b border-white/10">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full border border-white/20 overflow-hidden">
-                            <img src={user.profilePicture} alt="User" className="w-full h-full object-cover grayscale" />
-                        </div>
-                        <span className="font-headline text-lg font-bold text-white uppercase">{user.name.split('_')[0]}</span>
+                        {user ? (
+                            <>
+                                <div className="relative w-8 h-8 rounded-full border border-white/20 overflow-hidden bg-neutral-700">
+                                    {user.profilePicture ? (
+                                        <Image 
+                                            src={user.profilePicture} 
+                                            alt="User" 
+                                            fill
+                                            className="object-cover grayscale hover:grayscale-0 transition-all duration-500" 
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-neutral-400">
+                                            <User size={16} />
+                                        </div>
+                                    )}
+                                </div>
+                                <span className="font-headline text-lg font-bold text-white uppercase">
+                                    {user.name?.split('_')[0] || 'User'}
+                                </span>
+                            </>
+                        ) : (
+                            <Link href="/account" className="font-headline text-sm text-neutral-400 uppercase tracking-widest hover:text-white transition-colors">Sign In</Link>
+                        )}
                     </div>
                     <button 
                         onClick={() => setIsMenuOpen(false)}
@@ -172,7 +192,7 @@ export const Navbar = () => {
                         <div className="flex items-center gap-3">
                             <button 
                                 onClick={() => setIsMenuOpen(true)}
-                                className="p-2 -ml-2 text-white hover:bg-white/10 rounded-lg transition-colors lg:hidden"
+                                className="p-3 -ml-2 text-white hover:bg-white/10 rounded-lg transition-colors lg:hidden"
                             >
                                 <Menu size={24} />
                             </button>
@@ -185,23 +205,20 @@ export const Navbar = () => {
                         {/* Center: Desktop Nav */}
                         <nav className="hidden lg:flex items-center gap-8">
                             <Link href="/shop" className="font-headline text-xs uppercase tracking-wider font-bold text-white hover:text-neutral-300 transition-colors">
-                                Marketplace
+                                Market
+                            </Link>
+                            <Link href="/discover" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-cyan-400 transition-colors">
+                                Discover
+                            </Link>
+                            <Link href="/archive" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
+                                Archive
                             </Link>
                             <Link href="/deals" className="relative font-headline text-xs uppercase tracking-wider font-bold text-orange-400 hover:text-orange-300 transition-colors">
                                 Deals
                                 <span className="absolute -top-1 -right-4 px-1.5 py-0.5 bg-red-500 text-white text-[8px] font-bold rounded">HOT</span>
                             </Link>
                             <Link href="/bulk" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
-                                Bulk Orders
-                            </Link>
-                            <Link href="/logistics" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
-                                Logistics
-                            </Link>
-                            <Link href="/team" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
-                                Collective
-                            </Link>
-                            <Link href="/analytics" className="font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white transition-colors">
-                                Analytics
+                                Bulk
                             </Link>
                         </nav>
 
@@ -210,7 +227,7 @@ export const Navbar = () => {
                             {/* Search Button (Mobile) */}
                             <button 
                                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                                className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors lg:hidden"
+                                className="p-3 text-white hover:bg-white/10 rounded-lg transition-colors lg:hidden"
                             >
                                 <Search size={22} />
                             </button>
@@ -228,10 +245,10 @@ export const Navbar = () => {
                             </div>
 
                             {/* Cart */}
-                            <Link href="/cart" className="relative p-2 text-white hover:bg-white/10 rounded-lg transition-colors">
+                            <Link href="/cart" className="relative p-3 text-white hover:bg-white/10 rounded-lg transition-colors">
                                 <ShoppingBag size={22} />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-white text-black text-[10px] font-bold flex items-center justify-center rounded-full px-1">
+                                    <span className="absolute top-1 right-1 min-w-[18px] h-[18px] bg-white text-black text-[10px] font-bold flex items-center justify-center rounded-full px-1">
                                         {cartCount > 99 ? '99+' : cartCount}
                                     </span>
                                 )}
@@ -245,25 +262,27 @@ export const Navbar = () => {
                     </div>
 
                     {/* Mobile Nav Pills */}
-                    <div className="flex items-center gap-1 px-4 py-2 border-t border-white/5 overflow-x-auto lg:hidden scrollbar-hide">
-                        <Link href="/shop" className="px-4 py-2 text-xs font-headline uppercase tracking-wider font-bold text-white bg-white/10 rounded-full whitespace-nowrap">
-                            Shop
+                    <div className="relative scroll-fade-right">
+                        <div className="flex items-center gap-1 px-4 py-2 border-t border-white/5 overflow-x-auto lg:hidden no-scrollbar">
+                        <Link href="/discover" className="px-4 py-2 text-xs font-headline uppercase tracking-wider font-bold text-cyan-400 bg-cyan-400/10 rounded-full whitespace-nowrap">
+                            Discover
+                        </Link>
+                        <Link href="/shop" className="px-4 py-2 text-xs font-headline uppercase tracking-wider font-bold text-white whitespace-nowrap">
+                            Market
+                        </Link>
+                        <Link href="/archive" className="px-4 py-2 text-xs font-headline uppercase tracking-wider font-bold text-neutral-400 whitespace-nowrap">
+                            Archive
                         </Link>
                         <Link href="/deals" className="px-4 py-2 text-xs font-headline uppercase tracking-wider font-bold text-orange-400 whitespace-nowrap">
                             Deals 🔥
                         </Link>
-                        <Link href="/bulk" className="px-4 py-2 text-xs font-headline uppercase tracking-wider font-bold text-neutral-400 whitespace-nowrap">
-                            Bulk
-                        </Link>
                         <Link href="/orders" className="px-4 py-2 text-xs font-headline uppercase tracking-wider font-bold text-neutral-400 whitespace-nowrap">
-                            Orders
-                        </Link>
-                        <Link href="/account" className="px-4 py-2 text-xs font-headline uppercase tracking-wider font-bold text-neutral-400 whitespace-nowrap">
-                            Account
+                            Uplink
                         </Link>
                     </div>
                 </div>
-            </header>
-        </>
+            </div>
+        </header>
+    </>
     );
 };

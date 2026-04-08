@@ -1,0 +1,3 @@
+d:\e commerce platform\node_modules\stripe\cjs\stripe.core.js:            throw new Error('Neither apiKey nor config.authenticator provided');
+d:\e commerce platform\node_modules\stripe\esm\stripe.core.js:            throw new Error('Neither apiKey nor config.authenticator provided');
+d:\e commerce platform\node_modules\stripe\esm\stripe.esm.node.js:            throw new Error('Neither apiKey nor config.authenticator provided');

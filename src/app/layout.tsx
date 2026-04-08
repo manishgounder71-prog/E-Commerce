@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
+import { SessionProvider } from "@/components/SessionProvider";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -126,8 +127,10 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} font-body antialiased bg-surface text-on-surface selection:bg-white selection:text-black scanline-overlay`}
       >
-        {children}
-        <Footer />
+        <SessionProvider>
+          {children}
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );

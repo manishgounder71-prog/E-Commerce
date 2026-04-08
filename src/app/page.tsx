@@ -13,7 +13,7 @@ export default function Home() {
 
             <div className="pt-20 sm:pt-20">
                 {/* Hero Section */}
-                <section className="relative min-h-[80vh] sm:min-h-[85vh] flex items-center px-4 sm:px-8 lg:px-16 xl:px-20 overflow-hidden bg-[radial-gradient(circle_at_50%_50%,#1f1f1f_0%,#131313_100%)]">
+                <section className="relative min-h-[60vh] sm:min-h-[85vh] flex items-center px-4 sm:px-8 lg:px-16 xl:px-20 overflow-hidden bg-[radial-gradient(circle_at_50%_50%,#1f1f1f_0%,#131313_100%)]">
                     <div className="relative z-10 max-w-2xl lg:max-w-3xl mt-8 sm:mt-12">
                         <span className="font-headline uppercase text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] text-neutral-500 mb-4 sm:mb-6 block font-bold">
                             NEBULA STORE
@@ -79,7 +79,7 @@ export default function Home() {
                             desc="Everything you need for your home."
                             image="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80"
                         />
-                        <div className="group glass-panel relative overflow-hidden p-6 sm:p-8 lg:p-10 flex flex-col justify-center gap-4 sm:gap-6 rounded-xl border-white/10 hover:border-white/20 transition-all">
+                        <div className="group premium-glass relative overflow-hidden p-6 sm:p-8 lg:p-10 flex flex-col justify-center gap-4 sm:gap-6 rounded-xl border-white/10 hover:border-white/20 transition-all">
                             <Image 
                                 src="/images/flash-deals.png"
                                 alt="Flash Deals"

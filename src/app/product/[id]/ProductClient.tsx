@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Navbar } from '@/components/Navbar';
-import { useStore, MOCK_PRODUCTS, MOCK_REVIEWS, Product } from '@/lib/store';
+import { useStore, Product } from '@/lib/store';
 import { 
     ShoppingCart, 
     ShieldCheck, 
@@ -25,11 +25,11 @@ interface ProductClientProps {
 }
 
 export default function ProductClient({ product }: ProductClientProps) {
-    const { addToCart, wishlist, addToWishlist, removeFromWishlist, addToRecentlyViewed, recentlyViewed } = useStore();
+    const { products, addToCart, wishlist, addToWishlist, removeFromWishlist, addToRecentlyViewed, recentlyViewed } = useStore();
     
     const isInWishlist = wishlist.includes(product.id);
-    const reviews = MOCK_REVIEWS[product.id] || [];
-    const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
+    const reviews: any[] = []; // Default to empty until reviews table is ready
+    const discount = product.original_price ? Math.round((1 - product.price / product.original_price) * 100) : 0;
 
     const [quantity, setQuantity] = useState(1);
     const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>(() => {
@@ -62,12 +62,12 @@ export default function ProductClient({ product }: ProductClientProps) {
     };
 
     // Related products
-    const relatedProducts = MOCK_PRODUCTS
+    const relatedProducts = products
         .filter(p => p.category === product.category && p.id !== product.id)
         .slice(0, 4);
 
     // Recently viewed
-    const recentProducts = MOCK_PRODUCTS.filter(p => recentlyViewed.includes(p.id)).slice(0, 4);
+    const recentProducts = products.filter(p => recentlyViewed.includes(p.id)).slice(0, 4);
 
     return (
         <main className="min-h-screen bg-surface text-white">
@@ -105,7 +105,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                                             {discount}% OFF
                                         </span>
                                     )}
-                                    {product.inStock === false && (
+                                    {product.stock === 0 && (
                                         <span className="px-3 py-1.5 bg-neutral-700 text-white text-xs font-bold rounded-lg">
                                             Out of Stock
                                         </span>
@@ -152,7 +152,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                                             ))}
                                         </div>
                                         <span className="text-sm text-white font-bold">{product.rating}</span>
-                                        <span className="text-sm text-neutral-500">({product.reviewCount} ratings)</span>
+                                        <span className="text-sm text-neutral-500">({product.review_count || 0} ratings)</span>
                                     </div>
                                 )}
                             </div>
@@ -161,10 +161,10 @@ export default function ProductClient({ product }: ProductClientProps) {
                         {/* Price */}
                         <div className="p-6 bg-surface-container-low rounded-xl border border-white/5 mb-6">
                             <div className="flex items-baseline gap-3 mb-2">
-                                <span className="text-3xl sm:text-4xl font-headline font-bold text-white">₹{product.price.toLocaleString()}</span>
-                                {product.originalPrice && (
+                                <span className="text-3xl sm:text-4xl font-headline font-bold text-white">${product.price.toLocaleString()}</span>
+                                {product.original_price && (
                                     <>
-                                        <span className="text-lg text-neutral-500 line-through">₹{product.originalPrice.toLocaleString()}</span>
+                                        <span className="text-lg text-neutral-500 line-through">${product.original_price.toLocaleString()}</span>
                                         <span className="text-sm text-green-500 font-bold">{discount}% off</span>
                                     </>
                                 )}
@@ -196,13 +196,12 @@ export default function ProductClient({ product }: ProductClientProps) {
                             </div>
                         ))}
 
-                        {/* Stock Status */}
                         <div className="flex items-center gap-2 mb-6">
-                            {product.inStock ? (
+                            {product.stock > 0 ? (
                                 <>
                                     <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
                                     <span className="text-sm text-green-500 font-bold uppercase tracking-wider">
-                                        In Stock {product.stockCount && `(${product.stockCount} left)`}
+                                        In Stock ({product.stock} left)
                                     </span>
                                 </>
                             ) : (
@@ -233,11 +232,11 @@ export default function ProductClient({ product }: ProductClientProps) {
 
                             <button 
                                 onClick={handleAddToCart}
-                                disabled={product.inStock === false}
+                                disabled={product.stock === 0}
                                 className={`flex-1 py-4 font-headline font-bold uppercase text-sm tracking-wider rounded-xl transition-all flex items-center justify-center gap-3 ${
                                     success 
                                         ? 'bg-green-500 text-white' 
-                                        : product.inStock === false
+                                        : product.stock === 0
                                             ? 'bg-neutral-700 text-neutral-500 cursor-not-allowed'
                                             : 'bg-white text-black hover:bg-neutral-200'
                                 }`}
@@ -247,7 +246,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                                         <CheckCircle2 size={20} />
                                         Added to Cart
                                     </>
-                                ) : product.inStock === false ? (
+                                ) : product.stock === 0 ? (
                                     'Out of Stock'
                                 ) : (
                                     <>
@@ -276,10 +275,12 @@ export default function ProductClient({ product }: ProductClientProps) {
                                 <span className="font-headline text-sm font-bold text-white uppercase tracking-wider">Free Delivery</span>
                             </div>
                             <p className="text-sm text-neutral-500 mb-2">
-                                Delivery by <span className="text-white font-bold">Tomorrow, March 24</span>
+                                Delivery by <span className="text-white font-bold">
+                                    {new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                                </span>
                             </p>
                             <p className="text-xs text-neutral-600">
-                                Order within 5 hours 23 minutes
+                                Free shipping on orders over $50
                             </p>
                         </div>
 
@@ -331,7 +332,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                                                     <Star key={star} size={14} className={star <= Math.round(product.rating || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-neutral-600'} />
                                                 ))}
                                             </div>
-                                            <p className="text-xs text-neutral-500 mt-1">{product.reviewCount} reviews</p>
+                                            <p className="text-xs text-neutral-500 mt-1">{product.review_count || 0} reviews</p>
                                         </div>
                                         <div className="flex-1 space-y-2">
                                             {[[5, 75], [4, 15], [3, 6], [2, 3], [1, 1]].map(([stars, percent]) => (
@@ -396,14 +397,18 @@ export default function ProductClient({ product }: ProductClientProps) {
                                         <TruckIcon size={24} className="text-green-500" />
                                         <div>
                                             <p className="font-headline text-sm font-bold text-white">Free Standard Delivery</p>
-                                            <p className="text-xs text-neutral-500">Delivery by Tomorrow, March 24</p>
+                                            <p className="text-xs text-neutral-500">
+                                                Delivery by {new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="p-4 bg-surface-container-low rounded-lg flex items-center gap-4">
                                         <Zap size={24} className="text-orange-500" />
                                         <div>
                                             <p className="font-headline text-sm font-bold text-white">Express Delivery</p>
-                                            <p className="text-xs text-neutral-500">Delivery by Today (₹99)</p>
+                                            <p className="text-xs text-neutral-500">
+                                                Delivery by {new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} ($9.99)
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="p-4 bg-surface-container-low rounded-lg flex items-center gap-4">
@@ -436,7 +441,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                                     </div>
                                     <div className="p-4">
                                         <h3 className="font-headline text-sm font-bold text-white uppercase truncate mb-1">{p.title}</h3>
-                                        <p className="font-headline text-base font-bold text-white">₹{p.price.toLocaleString()}</p>
+                                        <p className="font-headline text-base font-bold text-white">${p.price.toLocaleString()}</p>
                                     </div>
                                 </Link>
                             ))}
@@ -464,7 +469,7 @@ export default function ProductClient({ product }: ProductClientProps) {
                                     </div>
                                     <div className="p-4">
                                         <h3 className="font-headline text-sm font-bold text-white uppercase truncate mb-1">{p.title}</h3>
-                                        <p className="font-headline text-base font-bold text-white">₹{p.price.toLocaleString()}</p>
+                                        <p className="font-headline text-base font-bold text-white">${p.price.toLocaleString()}</p>
                                     </div>
                                 </Link>
                             ))}

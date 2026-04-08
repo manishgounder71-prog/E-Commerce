@@ -13,6 +13,7 @@ import {
     BarChart3, 
     Users,
     ShoppingBag,
+    User,
     X
 } from 'lucide-react';
 import { useStore } from '@/lib/store';
@@ -53,27 +54,58 @@ export const Sidebar = () => {
 
                 {/* User */}
                 <div className="p-4 border-b border-white/5">
-                    <Link href="/account" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group">
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-white/10 group-hover:border-white/20">
-                            <Image 
-                                alt="User" 
-                                fill
-                                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
-                                src={user.profilePicture} 
-                            />
-                        </div>
-                        <div>
-                            <p className="font-headline text-xs text-neutral-500 uppercase tracking-wider">{user.company || 'Void Agent'}</p>
-                            <p className="font-headline text-sm text-white font-bold uppercase truncate max-w-[140px]">{user.name}</p>
-                        </div>
-                    </Link>
+                    {user ? (
+                        <Link href="/account" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group">
+                            <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-white/10 group-hover:border-white/20 bg-neutral-700">
+                                {user.profilePicture ? (
+                                    <Image 
+                                        alt="User" 
+                                        fill
+                                        className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+                                        src={user.profilePicture} 
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <User size={20} className="text-neutral-400" />
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <p className="font-headline text-xs text-neutral-500 uppercase tracking-wider">{user.company || 'User'}</p>
+                                <p className="font-headline text-sm text-white font-bold uppercase truncate max-w-[140px]">{user.name || 'Guest'}</p>
+                            </div>
+                        </Link>
+                    ) : (
+                        <Link href="/account" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group">
+                            <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                                <User size={20} className="text-neutral-500" />
+                            </div>
+                            <span className="font-headline text-sm text-neutral-400 uppercase tracking-widest">Sign In</span>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Navigation */}
                 <nav className="flex-1 overflow-y-auto p-4 space-y-6">
                     <div>
-                        <p className="font-headline text-[10px] text-neutral-500 uppercase tracking-[0.2em] mb-3 px-2">Marketplace</p>
+                        <p className="font-headline text-[10px] text-neutral-500 uppercase tracking-[0.2em] mb-3 px-2">Market</p>
                         <div className="space-y-1">
+                            <Link 
+                                href="/discover"
+                                onClick={() => setMenuOpen(false)}
+                                className="flex items-center gap-3 w-full px-4 py-3 rounded-lg font-headline text-xs uppercase tracking-wider font-bold text-cyan-400 bg-cyan-400/5 hover:bg-cyan-400/10 transition-all"
+                            >
+                                <LayoutGrid size={18} />
+                                Discover Feed
+                            </Link>
+                            <Link 
+                                href="/archive"
+                                onClick={() => setMenuOpen(false)}
+                                className="flex items-center gap-3 w-full px-4 py-3 rounded-lg font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white hover:bg-white/5 transition-all"
+                            >
+                                <History size={18} />
+                                Digital Archive
+                            </Link>
                             {categories.map((cat) => (
                                 <button
                                     key={cat.id}
@@ -104,8 +136,8 @@ export const Sidebar = () => {
                                 onClick={() => setMenuOpen(false)}
                                 className="flex items-center gap-3 w-full px-4 py-3 rounded-lg font-headline text-xs uppercase tracking-wider font-bold text-neutral-400 hover:text-white hover:bg-white/5 transition-all"
                             >
-                                <History size={18} />
-                                Void Logs
+                                <ShieldCheck size={18} />
+                                Uplink Status
                             </Link>
                         </div>
                     </div>
@@ -152,25 +184,42 @@ export const Sidebar = () => {
             {/* Desktop Sidebar */}
             <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 z-40 bg-neutral-900/60 backdrop-blur-xl border-r border-white/5 flex-col pt-20 pb-6 px-4 gap-4">
                 {/* User */}
-                <Link href="/account" className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group">
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-white/10 group-hover:border-white/20">
-                        <Image 
-                            alt="User" 
-                            fill
-                            className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
-                            src={user.profilePicture} 
-                        />
-                    </div>
-                    <div>
-                        <p className="font-headline text-[9px] text-neutral-500 uppercase tracking-wider">{user.company || 'Void Agent'}</p>
-                        <p className="font-headline text-[11px] text-white font-bold uppercase tracking-wide truncate max-w-[120px]">{user.name}</p>
-                    </div>
-                </Link>
+                {user ? (
+                    <Link href="/account" className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group">
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-white/10 group-hover:border-white/20">
+                            <Image 
+                                alt="User" 
+                                fill
+                                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+                                src={user.profilePicture} 
+                            />
+                        </div>
+                        <div>
+                            <p className="font-headline text-[9px] text-neutral-500 uppercase tracking-wider">{user.company || 'Void Agent'}</p>
+                            <p className="font-headline text-[11px] text-white font-bold uppercase tracking-wide truncate max-w-[120px]">{user.name}</p>
+                        </div>
+                    </Link>
+                ) : (
+                    <Link href="/account" className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors group">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                            <User size={18} className="text-neutral-500" />
+                        </div>
+                        <span className="font-headline text-[11px] text-neutral-400 uppercase tracking-widest">Sign In</span>
+                    </Link>
+                )}
 
                 {/* Nav */}
                 <nav className="flex-1 overflow-y-auto space-y-6">
                     <div>
-                        <p className="font-headline text-[9px] text-neutral-500 uppercase tracking-[0.2em] mb-2 px-3">Marketplace</p>
+                        <p className="font-headline text-[9px] text-neutral-500 uppercase tracking-[0.2em] mb-2 px-3">Market</p>
+                        <Link href="/discover" className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md font-headline text-[10px] uppercase tracking-wider font-bold text-cyan-400 hover:bg-cyan-400/5 transition-all">
+                            <LayoutGrid size={16} />
+                            Discover Feed
+                        </Link>
+                        <Link href="/archive" className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md font-headline text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-white hover:bg-white/5 transition-all">
+                            <History size={16} />
+                            Digital Archive
+                        </Link>
                         {categories.map((cat) => (
                             <button
                                 key={cat.id}
@@ -190,8 +239,8 @@ export const Sidebar = () => {
                             Wishlist Vault
                         </Link>
                         <Link href="/orders" className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md font-headline text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-white hover:bg-white/5 transition-all">
-                            <History size={16} />
-                            Void Logs
+                            <ShieldCheck size={16} />
+                            Uplink Status
                         </Link>
                     </div>
 

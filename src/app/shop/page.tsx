@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
-import { useStore, MOCK_PRODUCTS, Product } from '@/lib/store';
+import { useStore, Product } from '@/lib/store';
 import { 
     ShoppingCart, 
     Package, 
@@ -18,7 +18,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Shop() {
-    const { searchQuery, setSearchQuery, activeCategory, setActiveCategory, priceRange, setPriceRange, minRating, setMinRating, inStockOnly, setInStockOnly } = useStore();
+    const { products, searchQuery, setSearchQuery, activeCategory, setActiveCategory, priceRange, setPriceRange, minRating, setMinRating, inStockOnly, setInStockOnly } = useStore();
     const [showFilters, setShowFilters] = useState(false);
     const [gridSize, setGridSize] = useState<'small' | 'medium' | 'large'>('medium');
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -27,16 +27,16 @@ export default function Shop() {
     // Search suggestions
     const suggestions = useMemo(() => {
         if (!searchQuery || searchQuery.length < 2) return [];
-        return MOCK_PRODUCTS.filter(p => 
+        return products.filter(p => 
             p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
             p.brand?.toLowerCase().includes(searchQuery.toLowerCase())
         ).slice(0, 5);
-    }, [searchQuery]);
+    }, [searchQuery, products]);
 
     // Filtered products
     const filteredProducts = useMemo(() => {
-        let filtered = MOCK_PRODUCTS;
+        let filtered = products;
         
         // Search
         if (searchQuery) {
@@ -62,11 +62,11 @@ export default function Shop() {
         
         // In stock
         if (inStockOnly) {
-            filtered = filtered.filter(p => p.inStock !== false);
+            filtered = filtered.filter(p => (p.stock > 0));
         }
         
         return filtered;
-    }, [searchQuery, activeCategory, priceRange, minRating, inStockOnly]);
+    }, [searchQuery, activeCategory, priceRange, minRating, inStockOnly, products]);
 
     // Close suggestions on click outside
     useEffect(() => {
@@ -83,8 +83,8 @@ export default function Shop() {
 
     const gridCols = {
         small: 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6',
-        medium: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
-        large: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+        medium: 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+        large: 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3'
     };
 
     const jsonLd = {
@@ -157,7 +157,7 @@ export default function Shop() {
                                             <p className="font-headline text-sm text-white uppercase truncate">{product.title}</p>
                                             <p className="text-[10px] text-neutral-500 uppercase">{product.category} • {product.brand}</p>
                                         </div>
-                                        <p className="font-headline font-bold text-white">₹{product.price.toLocaleString()}</p>
+                                        <p className="font-headline font-bold text-white">${product.price.toLocaleString()}</p>
                                     </Link>
                                 ))}
                             </div>
@@ -248,9 +248,9 @@ export default function Shop() {
                                         className="w-full accent-white"
                                     />
                                     <div className="flex items-center gap-2">
-                                        <span className="font-headline text-xs text-neutral-500">₹{priceRange[0]}</span>
+                                        <span className="font-headline text-xs text-neutral-500">${priceRange[0]}</span>
                                         <span className="text-neutral-700">-</span>
-                                        <span className="font-headline text-xs text-neutral-500">₹{priceRange[1]}</span>
+                                        <span className="font-headline text-xs text-neutral-500">${priceRange[1]}</span>
                                     </div>
                                 </div>
                             </div>
@@ -346,17 +346,18 @@ export default function Shop() {
     );
 }
 
-function ProductCard({ id, title, price, originalPrice, image, category, rating, reviewCount, inStock, stockCount, brand }: Product) {
+function ProductCard(product: Product) {
+    const { id, title, price, original_price, image, category, rating, review_count, stock, brand } = product;
     const { addToCart, wishlist, addToWishlist, removeFromWishlist } = useStore();
     const [added, setAdded] = useState(false);
     
     const isInWishlist = wishlist.includes(id);
-    const discount = originalPrice ? Math.round((1 - price / originalPrice) * 100) : 0;
+    const discount = original_price ? Math.round((1 - price / original_price) * 100) : 0;
 
     const handleQuickAdd = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        addToCart({ id, title, price, image, category, brand });
+        addToCart(product);
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
     };
@@ -391,14 +392,14 @@ function ProductCard({ id, title, price, originalPrice, image, category, rating,
                                 -{discount}%
                             </span>
                         )}
-                        {!inStock && (
+                        {stock === 0 && (
                             <span className="px-2 py-1 bg-neutral-700 text-white text-[10px] font-bold rounded">
                                 Out of Stock
                             </span>
                         )}
-                        {inStock && stockCount && stockCount < 10 && (
+                        {stock > 0 && stock < 10 && (
                             <span className="px-2 py-1 bg-orange-500 text-white text-[10px] font-bold rounded">
-                                Only {stockCount} left
+                                Only {stock} left
                             </span>
                         )}
                     </div>
@@ -446,19 +447,19 @@ function ProductCard({ id, title, price, originalPrice, image, category, rating,
                                     />
                                 ))}
                             </div>
-                            <span className="text-[10px] text-neutral-500">({reviewCount})</span>
+                            <span className="text-[10px] text-neutral-500">({review_count || 0})</span>
                         </div>
                     )}
 
                     {/* Price */}
                     <div className="flex items-center gap-2">
                         <span className="font-headline text-base font-bold text-white">
-                            ₹{price.toLocaleString()}
+                            ${price.toLocaleString()}
                         </span>
-                        {originalPrice && (
+                        {original_price && (
                             <>
                                 <span className="text-xs text-neutral-500 line-through">
-                                    ₹{originalPrice.toLocaleString()}
+                                    ${original_price.toLocaleString()}
                                 </span>
                                 <span className="text-[10px] text-green-500 font-bold">
                                     {discount}% off
@@ -469,7 +470,7 @@ function ProductCard({ id, title, price, originalPrice, image, category, rating,
 
                     {/* Stock Status */}
                     <div className="mt-2 flex items-center gap-1">
-                        {inStock ? (
+                        {stock > 0 ? (
                             <>
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                                 <span className="text-[10px] text-green-500 font-bold uppercase">In Stock</span>

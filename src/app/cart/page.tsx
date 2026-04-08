@@ -4,6 +4,7 @@ import React from 'react';
 import { Navbar } from '@/components/Navbar';
 import { useStore } from '@/lib/store';
 import { Trash2, Minus, Plus, ArrowLeft, ShoppingBag, ShieldCheck, Truck, Zap } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function CartPage() {
@@ -45,8 +46,13 @@ export default function CartPage() {
                             <div className="space-y-4 sm:space-y-6">
                                 {cart.map((item) => (
                                     <div key={item.id} className="flex gap-4 sm:gap-6 pb-6 border-b border-white/5">
-                                        <Link href={`/product/${item.id}`} className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-surface-container-lowest rounded-xl overflow-hidden border border-white/5 flex-shrink-0">
-                                            <img src={item.image} alt={item.title} className="w-full h-full object-contain p-2" />
+                                        <Link href={`/product/${item.id}`} className="relative w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-surface-container-lowest rounded-xl overflow-hidden border border-white/5 flex-shrink-0">
+                                            <Image 
+                                                src={item.image} 
+                                                alt={item.title} 
+                                                fill
+                                                className="object-contain p-2 grayscale hover:grayscale-0 transition-all duration-500" 
+                                            />
                                         </Link>
                                         <div className="flex-1 flex flex-col justify-between min-w-0">
                                             <div className="flex justify-between items-start gap-2">
